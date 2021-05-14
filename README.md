@@ -1,5 +1,8 @@
 # Cues
 
+![Python Version](https://img.shields.io/pypi/pyversions/cues) ![PyPI](https://img.shields.io/pypi/v/cues) ![Development Status](https://img.shields.io/badge/development%20status-alpha-red) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/GBS3/cues/cues) [![codecov](https://codecov.io/gh/GBS3/cues/branch/main/graph/badge.svg)](https://codecov.io/gh/GBS3/cues) ![License](https://img.shields.io/pypi/l/cues)
+
+
 Elegant and sophisticated prompts to inquire and ask questions at the command line.
 
 ## Compatibility
@@ -10,7 +13,7 @@ Windows | macOS | Linux
 
 ## Installation
 
-Install with `pip`:
+You can install Cues by using `pip`:
 
 ```
 pip install cues
