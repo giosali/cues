@@ -29,7 +29,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       
       - name: run unit tests [pytest]
-        run: pytest
+        run: pytest -s
 
       - name: generate report
         run: pytest --cov=./ --cov-report=xml
