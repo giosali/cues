@@ -5,6 +5,8 @@
 
 Elegant and sophisticated prompts to inquire and ask questions at the command line.
 
+<img src="https://raw.githubusercontent.com/GBS3/cues/main/media/snapshot.png" width="600">
+
 ## Compatibility
 
 Windows | macOS | Linux
