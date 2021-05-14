@@ -23,6 +23,12 @@ class TestSelect:
             'C++',
         ]
 
+        self.dic = {
+            'name': self.name,
+            'message': self.message,
+            'options': self.options
+        }
+
     def test__init__(self):
         cue = Select(self.name, self.message, self.options)
 
@@ -43,6 +49,19 @@ class TestSelect:
             Select(self.name, 1, self.options)
         with pytest.raises(TypeError):
             Select(self.name, self.message, 1)
+
+    def test_from_dict(self):
+        cue = Select.from_dict(self.dic)
+
+        # ABC:
+        assert cue._name == self.name
+        assert cue._message == self.message
+
+        assert cue._options == self.options
+        assert cue._num_options == len(self.options)
+
+        # Property methods:
+        assert cue.markers == cue._markers
 
     def test_options_property(self):
         cue = Select(self.name, self.message, self.options)
@@ -112,6 +131,11 @@ class TestConfirm:
         self.name = 'continue'
         self.message = 'Are you sure you would like to continue?'
 
+        self.dic = {
+            'name': self.name,
+            'message': self.message
+        }
+
     def test__init__(self):
         cue = Confirm(self.name, self.message)
 
@@ -123,6 +147,12 @@ class TestConfirm:
             Confirm(1, self.message)
         with pytest.raises(TypeError):
             Confirm(self.name, 1)
+
+    def test_from_dict(self):
+        cue = Confirm.from_dict(self.dic)
+
+        assert cue._name == self.name
+        assert cue._message == self.message
 
     # For dev use only (do NOT use with CI):
 
@@ -157,6 +187,12 @@ class TestForm:
             }
         ]
 
+        self.dic = {
+            'name': self.name,
+            'message': self.message,
+            'fields': self.fields
+        }
+
     def test__init__(self):
         cue = Form(self.name, self.message, self.fields)
 
@@ -172,6 +208,14 @@ class TestForm:
             Form(self.name, 1, self.fields)
         with pytest.raises(TypeError):
             Form(self.name, self.message, 1)
+
+    def test_from_dict(self):
+        cue = Form.from_dict(self.dic)
+
+        assert cue._name == self.name
+        assert cue._message == self.message
+
+        assert cue._fields == self.fields
 
     # For dev use only (do NOT use with CI):
 
@@ -220,6 +264,13 @@ class TestSurvey:
             }
         ]
 
+        self.dic = {
+            'name': self.name,
+            'message': self.message,
+            'scale': self.scale,
+            'fields': self.fields
+        }
+
     def test__init__(self):
         cue = Survey(self.name, self.message, self.scale, self.fields)
 
@@ -238,6 +289,15 @@ class TestSurvey:
             Survey(self.name, self.message, 1, self.fields)
         with pytest.raises(TypeError):
             Survey(self.name, self.message, self.scale, 1)
+
+    def test_from_dict(self):
+        cue = Survey.from_dict(self.dic)
+
+        assert cue._name == self.name
+        assert cue._message == self.message
+
+        assert cue._scale == self.scale
+        assert cue._fields == self.fields
 
     # For dev use only (do NOT use with CI):
 

@@ -11,7 +11,7 @@ Elegant and sophisticated prompts to inquire and ask questions at the command li
 
 Windows | macOS | Linux
 ------- | ----- | -----
-✔ | ✔ | ❌
+✔ | ✔ | ✔
 
 ## Installation
 
@@ -24,6 +24,16 @@ pip install cues
 ## Examples
 
 <h3 align="center"><i><b>Select</b></i></h3>
+
+You can use the `Select` class to create a prompt that asks the user to select a single option among a list of them, allowing the user to shuffle through them by using the arrow keys.
+
+If you would like to to see an example of this in action, you can run the following command in your terminal:
+
+```
+python -m cues.select
+```
+
+Here's some example code showing how you could create a `Select` prompt:
 
 ```python
 from cues import Select
@@ -44,9 +54,18 @@ This produces the following output:
 
 <h3 align="center"><i><b>Confirm</b></i></h3>
 
+You can use the `Confirm` class to create a prompt that displays a message to the user and then asks them to enter y (Yes) or N (No).
+
+If you would like to to see an example of this in action, you can run the following command in your terminal:
+
+```
+python -m cues.confirm
+```
+
+Here's some example code showing how you could create a `Confirm` prompt:
+
 ```python
 from cues import Confirm
-
 
 name = 'continue'
 message = 'Are you sure you want to continue?'
@@ -61,6 +80,16 @@ This produces the following output:
 <img src="https://raw.githubusercontent.com/GBS3/cues/main/media/confirm.gif" width="800">
 
 <h3 align="center"><i><b>Form</b></i></h3>
+
+You can use the `Form` prompt to display a series of fields for the user to answer and fill out.
+
+If you would like to to see an example of this in action, you can run the following command in your terminal:
+
+```
+python -m cues.form
+```
+
+Here's some example code showing how you could create a `Form` prompt:
 
 ```python
 from cues import Form
@@ -95,6 +124,16 @@ This produces the following output:
 <img src="https://raw.githubusercontent.com/GBS3/cues/main/media/form.gif" width="800">
 
 <h3 align="center"><i><b>Survey</b></i></h3>
+
+You can use the `Survey` class to display a series of questions to the user and have them give a rating based on a scale that you provide.
+
+If you would like to to see an example of this in action, you can run the following command in your terminal:
+
+```
+python -m cues.survey
+```
+
+Here's some example code showing how you could create a `Survey` prompt:
 
 ```python
 from cues import Survey
