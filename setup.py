@@ -38,7 +38,7 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     url=about['__url__'],
     license=about['__license__'],
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=['media']),
     package_data={'': ['LICENSE']},
     include_package_data=True,
     zip_safe=False,

@@ -15,7 +15,7 @@ def main(test=0):
 
     if not test:
         prompt = Select(name, message, options)
-        answer = prompt.ask()
+        answer = prompt.send()
         print(answer)
 
 

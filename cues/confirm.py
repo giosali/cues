@@ -14,7 +14,7 @@ def main(test=0):
 
     if not test:
         prompt = Confirm(name, message)
-        answer = prompt.ask()
+        answer = prompt.send()
         print(answer)
 
 

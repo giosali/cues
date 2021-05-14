@@ -30,7 +30,7 @@ def main(test=0):
 
     if not test:
         prompt = Form(name, message, fields)
-        answer = prompt.ask()
+        answer = prompt.send()
         print(answer)
 
 

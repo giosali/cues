@@ -33,7 +33,7 @@ def main(test=0):
 
     if not test:
         prompt = Survey(name, message, scale, fields)
-        answer = prompt.ask()
+        answer = prompt.send()
         print(answer)
 
 
