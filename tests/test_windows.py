@@ -84,10 +84,10 @@ def test_update_coord():
     assert windows_get_coord_obj.Y == dummy_y
 
 
-@pytest.mark.skipif(platform.system() != 'Windows', reason='OS must be Windows')
-def test_get_console_cursor_position():
-    stdout_handle = windows.get_std_handle(-11)
+# @pytest.mark.skipif(platform.system() != 'Windows', reason='OS must be Windows')
+# def test_get_console_cursor_position():
+#     stdout_handle = windows.get_std_handle(-11)
 
-    # Note: This throws an AssertionError if you use pytest but don't include the
-    # -s flag to capture stdout output:
-    assert windows.get_console_cursor_position(stdout_handle) is not None
+#     # Note: This throws an AssertionError if you use pytest but don't include the
+#     # -s flag to capture stdout output:
+#     assert windows.get_console_cursor_position(stdout_handle) is not None
