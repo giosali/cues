@@ -632,12 +632,16 @@ class Survey(Cue):
     fields : iterable of dict
         An iterable of dict objects that contain information about the survey
         questions.
+    legend : iterable
+        An iterable of objects (mainly str) to be used to define the values
+        of the scale.
     """
 
     __name__ = 'Survey'
     __module__ = 'cues'
 
-    def __init__(self, name: str, message: str, scale: Iterable, fields: Iterable[dict]):
+    def __init__(self, name: str, message: str, scale: Iterable,
+                 fields: Iterable[dict], legend: Iterable = []):
         """Inits a Form class with `name`, `message`, `scale`, and `fields`.
 
         Attributes
@@ -646,6 +650,27 @@ class Survey(Cue):
             A list of objects to use as the range for the scale.
         _fields : list of dict
             A list object containing dicts (fields) to construct a survey.
+        _legend : list of str
+            A list object containing str objects that defines values for
+            _scale.
+        _legend_fmt : str
+            A str object with the format for the legend.
+        _header_fmt : str
+            A str object with the format for the legend header.
+        _space_btwn : int
+            A constant integer representing the space between legend values.
+            This is only used if there are only two legend values.
+        _total_legend_fmt_len : int
+            An integer representing the total space between the header.
+            This is only used if there are only two legend values.
+        _init_fmt : str
+            A str object with the format for the initial statement.
+        _msg_fmt : str
+            A str object with the format for the message.
+        _pt_fmt : str
+            A str object with the format for the number of points in the scale.
+        _scale_fmt : str
+            A str object with the format for the values of the scale.
         """
 
         super().__init__(name, message)
@@ -660,10 +685,45 @@ class Survey(Cue):
         else:
             raise TypeError(f"'{type(fields)}' object is not iterable")
 
+        try:
+            self._legend = list(scale.values())
+        except (NameError, AttributeError):
+            self._legend = legend
+
+        if self._legend:
+            legend_len = len(self._legend)
+            scale_len = len(self._scale)
+
+            if legend_len == scale_len:
+                self._legend_fmt = '\t[grey]{val} : {legend}[/grey]\n'
+                self._header_fmt = None
+
+            elif legend_len == 2:
+                legend_fmt = '\t[grey]{:<{space}}[/grey]' * scale_len
+                max_legend_len, index = utils.get_max_len(self._legend)
+
+                tab = 4
+                max_legend_len -= (0 if max_legend_len <= tab else tab)
+
+                self._space_btwn = 6
+                self._total_legend_fmt_len = self._space_btwn * scale_len + 1
+                self._legend_fmt = (max_legend_len * ' ') + legend_fmt
+
+                self._header_fmt = (' ' * (tab if index else 0)
+                                    ) + '[grey]{}{space}{}[/grey]'
+        else:
+            self._legend_fmt = None
+            self._header_fmt = None
+            self._space_btwn = None
+            self._total_legend_fmt_len = None
+
         self._init_fmt = '[pink][?][/pink] {msg}\n\n'
+
         self._msg_fmt = '{count}. {msg}\n'  # Top
+
         lines_and_pts = '{line}'.join(['{}' for _ in range(len(self._scale))])
         self._pt_fmt = '[skyblue]' + lines_and_pts + '[/skyblue]\n'  # Middle
+
         self._scale_fmt = '{:<{length}}'  # Bottom
 
     def send(self):
@@ -688,6 +748,20 @@ class Survey(Cue):
         """
 
         cursor.write(self._init_fmt.format(msg=self._message), color=True)
+
+        if self._legend:
+            # If there are only two elems in self._legend:
+            if self._header_fmt:
+                cursor.write(self._header_fmt.format(
+                    *self._legend, space=self._total_legend_fmt_len * ' '), color=True, newlines=1)
+                cursor.write(self._legend_fmt.format(
+                    *self._scale, space=self._space_btwn), color=True, newlines=3)
+            # else, if lengths of _legend and _scale are equal:
+            else:
+                for pt, desc in zip(self._scale, self._legend):
+                    cursor.write(self._legend_fmt.format(
+                        val=pt, legend=desc), color=True)
+                cursor.write('', newlines=2)
 
         # For keeping track of location:
         scale_len = len(self._scale)
@@ -793,7 +867,12 @@ class Survey(Cue):
 
                 # If at the end of the survey, then quit:
                 if current_val == scale_len - 1:
-                    cursor.clear(max_fields)
+                    if self._header_fmt:
+                        cursor.clear(max_fields + 4)
+                    else:
+                        cursor.clear(
+                            max_fields + (len(self._legend) + 2 if self._legend else 0))
+
                     break
                 else:
                     current_field -= 4

@@ -41,3 +41,11 @@ def test_get_half():
     expected_result = math.ceil(number / 2)
 
     assert utils.get_half(number) == expected_result
+
+
+def test_get_max_len():
+    lis = ['hello', 'bye']
+    maxi = max(len(i) for i in lis)
+    index = lis.index('hello')
+
+    assert utils.get_max_len(lis) == (maxi, index)

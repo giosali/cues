@@ -231,13 +231,6 @@ class TestSurvey:
     def setup(self):
         self.name = 'customer_satisfaction'
         self.message = 'Please rate the following areas:'
-        # self.scale = [
-        #     'Very dissatisfied',
-        #     'Dissatisfied',
-        #     'Neutral',
-        #     'Satisfied',
-        #     'Very satisfied'
-        # ]
         self.scale = [
             1,
             2,
@@ -264,6 +257,30 @@ class TestSurvey:
             }
         ]
 
+        self.scale_with_equal_descs = {
+            1: 'Very poor',
+            2: 'Poor',
+            3: 'Average',
+            4: 'Good',
+            5: 'Very good'
+        }
+
+        self.legend = [
+            'Very poor',
+            'Poor',
+            'Average',
+            'Good',
+            'Very good'
+        ]
+        self.legend_two = [
+            'Very dissatisfied',
+            'Very satisfied'
+        ]
+        # self.legend_two = [
+        #     'dissatisfied',
+        #     'Very satisfied'
+        # ]
+
         self.dic = {
             'name': self.name,
             'message': self.message,
@@ -279,6 +296,39 @@ class TestSurvey:
 
         assert cue._scale == self.scale
         assert cue._fields == self.fields
+
+    def test__init__with_scale_with_equal_descs(self):
+        cue = Survey(self.name, self.message,
+                     self.scale_with_equal_descs, self.fields)
+
+        assert cue._name == self.name
+        assert cue._message == self.message
+
+        assert cue._scale == list(self.scale_with_equal_descs)
+        assert cue._fields == self.fields
+        assert cue._legend == list(self.scale_with_equal_descs.values())
+
+    def test__init__with_legend(self):
+        cue = Survey(self.name, self.message, self.scale,
+                     self.fields, self.legend)
+
+        assert cue._name == self.name
+        assert cue._message == self.message
+
+        assert cue._scale == self.scale
+        assert cue._fields == self.fields
+        assert cue._legend == self.legend
+
+    def test__init__with_legend_two(self):
+        cue = Survey(self.name, self.message, self.scale,
+                     self.fields, self.legend_two)
+
+        assert cue._name == self.name
+        assert cue._message == self.message
+
+        assert cue._scale == self.scale
+        assert cue._fields == self.fields
+        assert cue._legend == self.legend_two
 
     def test__init__errors(self):
         with pytest.raises(TypeError):
@@ -303,6 +353,27 @@ class TestSurvey:
 
     # def test__draw(self):
     #     cue = Survey(self.name, self.message, self.scale, self.fields)
+
+    #     answer = cue.send()
+    #     print(answer)
+
+    # def test__draw_with_legend(self):
+    #     cue = Survey(self.name, self.message, self.scale,
+    #                  self.fields, self.legend)
+
+    #     answer = cue.send()
+    #     print(answer)
+
+    # def test__draw_with_legend_two(self):
+    #     cue = Survey(self.name, self.message, self.scale,
+    #                  self.fields, self.legend_two)
+
+    #     answer = cue.send()
+    #     print(answer)
+
+    # def test__draw_with_scale_with_equal_descs(self):
+    #     cue = Survey(self.name, self.message,
+    #                  self.scale_with_equal_descs, self.fields)
 
     #     answer = cue.send()
     #     print(answer)

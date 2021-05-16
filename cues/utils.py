@@ -102,3 +102,29 @@ def get_listen_function() -> windows.listen or unix.listen:
     if is_windows():
         return windows.listen
     return unix.listen
+
+
+def get_max_len(lis: list) -> tuple:
+    """Returns max length of str objects in a list and its index.
+
+    Parameters
+    ----------
+    lis : list
+        A list containing two str objects.
+
+    Returns
+    -------
+    :rtype: tuple
+        A tuple containing (in this order) an integer representing the
+        length of a str object and an integer representing the index
+        of that str object.
+    """
+    maxi = 0
+    count = -1
+
+    for elem in lis:
+        elem_len = len(elem)
+        if elem_len > maxi:
+            maxi = elem_len
+            count += 1
+    return (maxi, count)

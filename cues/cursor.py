@@ -53,9 +53,11 @@ def move(x: int = 0, y: int = 0):
     write(statement)
 
 
-def write(text: str, color=False):
+def write(text: str, color=False, newlines=0):
     if color:
         text = color_.make_colored(text)
+    if newlines:
+        text += '\n' * newlines
 
     sys.stdout.write(text)
     sys.stdout.flush()
