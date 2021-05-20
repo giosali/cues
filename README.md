@@ -173,7 +173,7 @@ This produces the following output:
 ## To Do
 
  - [x] Bring support to macOS
- - [ ] Bring support to Linux
+ - [x] Bring support to Linux
  - [ ] JSON prompt
  - [ ] Checkbox prompt
 
