@@ -5,6 +5,7 @@ tests.test_cue
 A testing module for `cues.cue`.
 """
 
+import sys
 from abc import ABCMeta
 from collections import deque
 from dataclasses import dataclass
@@ -14,6 +15,7 @@ import pytest
 from cues.cue import Cue
 
 
+@pytest.mark.skipif(sys.version_info < (3, 7), reason='requires Python 3.7 or higher')
 def test_cue():
     Cue.__abstractmethods__ = set()
 
