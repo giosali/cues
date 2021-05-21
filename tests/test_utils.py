@@ -10,7 +10,7 @@ import platform
 
 import pytest
 
-import cues.utils as utils
+from cues import utils
 
 
 def test_is_windows():

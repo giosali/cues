@@ -10,7 +10,7 @@ try:
     import msvcrt
 except ModuleNotFoundError:
     pass
-from ctypes import Structure, byref, c_long, c_short, c_ushort
+from ctypes import c_long
 try:
     from ctypes import windll
 except ImportError:
