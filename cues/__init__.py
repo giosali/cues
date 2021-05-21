@@ -18,10 +18,16 @@ The Prompts Library
 :license: MIT
 """
 
+import sys
+
 from .__version__ import (
     __title__, __version__, __author__, __author_email__,
     __description__, __url__, __license__, __copyright__
 )
-from .cues import (
-    Select, Confirm, Form, Survey
-)
+if '-m' not in sys.argv:
+    from .checkbox import Checkbox
+    from .confirm import Confirm
+    from .cue import Cue
+    from .form import Form
+    from .select import Select
+    from .survey import Survey

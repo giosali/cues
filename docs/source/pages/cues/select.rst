@@ -5,7 +5,7 @@ This page will explain how to use the ``Select`` cue of the `Cues` library.
 
 ``Select`` objects are useful when you need a user to select a single option out of a list of options. The result is a ``dict`` containing a ``str``.
 
-Before we start, make sure you have `Cues` `installed <install.html>`_.
+Before we start, make sure you have `Cues` `installed <../install.html>`_.
 
 Setting up
 ----------
@@ -76,7 +76,7 @@ Once the user is done perusing and has selected an option, a ``dict`` consisting
 Instantiating from a dict
 -------------------------
 
-In the previous example, we initialized separte variables for the ``__init__`` method of a ``Form`` object. *However*, we could also make use of the class's ``from_dict`` classmethod and instantiate by using a ``dict`` instead:
+In the previous example, we initialized separte variables for the ``__init__`` method of a ``Select`` object. *However*, we could also make use of the class's ``from_dict`` classmethod and instantiate by using a ``dict`` instead:
 ::
 
     from cues import Select

@@ -22,6 +22,7 @@ List of cues
     :maxdepth: 2
     :caption: Cues
 
+    cues/checkbox
     cues/confirm
     cues/form
     cues/select

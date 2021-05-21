@@ -25,7 +25,7 @@ Table of contents
 -----------------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 4
    :caption: Contents:
 
    pages/install

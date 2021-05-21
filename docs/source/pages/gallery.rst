@@ -13,6 +13,18 @@ Welcome to the gallery. Here, you can see quick snapshots of each of the individ
     ``python -m cues.survey``
 
 
+Checkbox
+--------
+
+.. figure:: ../_static/checkbox.png
+   :width: 600px
+   :align: center
+   :alt: checkbox snapshot
+   :figclass: align-center
+
+   *The Checkbox cue*
+
+
 Confirm
 -------
 

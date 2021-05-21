@@ -170,11 +170,48 @@ This produces the following output:
 
 <img src="https://raw.githubusercontent.com/GBS3/cues/main/media/survey.gif" width="800">
 
+<h3 align="center"><i><b>Checkbox</b></i></h3>
+
+You can use the `Checkbox` class to give a user a list of options and have them select as many as they would like by using the spacebar.
+
+If you would like to to see an example of this in action, you can run the following command in your terminal:
+
+```
+python -m cues.checkbox
+```
+
+Here's some example code showing how you could create a `Checkbox` prompt:
+
+```python
+from cues import Checkbox
+
+
+name = 'guitars'
+message = 'Pick your favorite guitars:'
+options = [
+    'Les Paul',
+    'Stratocaster',
+    'Telecaster',
+    'SG',
+    'Flying V',
+    'Acoustic',
+    'Classical',
+]
+
+cue = Checkbox(name, message, options)
+answer = cue.send()
+print(answer)
+```
+
+This produces the following output:
+
+<img src="https://raw.githubusercontent.com/GBS3/cues/main/media/checkbox.gif" width="800">
+
 ## To Do
 
  - [x] Bring support to macOS
  - [x] Bring support to Linux
  - [ ] JSON prompt
- - [ ] Checkbox prompt
+ - [x] Checkbox prompt
 
  ...*amongst other things!*

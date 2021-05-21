@@ -5,7 +5,7 @@ This page will explain how to use the ``Survey`` cue of the `Cues` library.
 
 ``Survey`` objects are useful when you need to ask a user to assign values for a series of prompts and would rather their responses be bundled into a single result. Typically, the responses the user gives should be numerical inputs (integers). The result is a ``dict`` containing a ``dict``.
 
-Before we start, make sure you have `Cues` `installed <install.html>`_.
+Before we start, make sure you have `Cues` `installed <../install.html>`_.
 
 Setting up
 ----------

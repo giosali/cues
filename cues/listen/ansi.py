@@ -25,6 +25,9 @@ ENTER_CTRL_CODE = 10  # Ordinal number for the enter key (CTRL + code) / Unix
 BACKSPACE = 8  # Ordinal number for the backspace key / Windows
 BACKSPACE_CTRL_CODE = 127  # Backspace key (CTRL + code) / Unix
 
+SPACE = 32  # Ordinal number for the space key / Windows & Unix
+
+
 Y_CODE = 121
 Y_SHIFT_CODE = 89
 N_CODE = 110

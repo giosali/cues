@@ -5,7 +5,7 @@ This page will explain how to use the ``Confirm`` cue of the `Cues` library.
 
 ``Confirm`` objects are useful for asking simple yes-no questions. The result is a ``dict`` containing a boolean value.
 
-Before we start, make sure you have `Cues` `installed <install.html>`_.
+Before we start, make sure you have `Cues` `installed <../install.html>`_.
 
 
 Setting up

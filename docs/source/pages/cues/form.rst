@@ -5,7 +5,7 @@ This page will explain how to use the ``Form`` cue of the `Cues` library.
 
 ``Form`` objects are useful for asking input from users for a series of prompts by having them type their responses. Thus the expected responses should be ``str`` objects. The result is a ``dict`` containing a ``dict``.
 
-Before we start, make sure you have `Cues` `installed <install.html>`_.
+Before we start, make sure you have `Cues` `installed <../install.html>`_.
 
 Setting up
 ----------

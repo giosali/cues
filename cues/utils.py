@@ -37,6 +37,7 @@ def get_keys() -> dict:
         'N': ansi.N_SHIFT_CODE,
         'y': ansi.Y_CODE,
         'Y': ansi.Y_SHIFT_CODE,
+        'space': ansi.SPACE,
     }
 
     if is_windows():

@@ -5,7 +5,6 @@ cues.constants
 A module that contains constants for all of the other modules in the `cues` package.
 """
 
-# cues.cues
 LIST_MARKER = '>'
 SELECT_MARKER = '>'
 
