@@ -8,7 +8,10 @@ A testing module for `cues.cue`.
 import sys
 from abc import ABCMeta
 from collections import deque
-from dataclasses import dataclass
+try:
+    from dataclasses import dataclass
+except ModuleNotFoundError:
+    pass
 
 import pytest
 
