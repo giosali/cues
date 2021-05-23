@@ -7,7 +7,6 @@ This module contains useful, general functions.
 
 import math
 import platform
-import sys
 
 from .listen import ansi, windows, unix
 
@@ -32,6 +31,7 @@ def get_keys() -> dict:
     -------
     :rtype: dict
     """
+
     keys = {
         'n': ansi.N_CODE,
         'N': ansi.N_SHIFT_CODE,
@@ -100,6 +100,7 @@ def get_listen_function() -> windows.listen or unix.listen:
     -------
     :rtype: function
     """
+
     if is_windows():
         return windows.listen
     return unix.listen
@@ -120,6 +121,7 @@ def get_max_len(lis: list) -> tuple:
         length of a str object and an integer representing the index
         of that str object.
     """
+
     maxi = 0
     count = -1
 

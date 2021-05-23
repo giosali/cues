@@ -7,6 +7,7 @@ A testing module for `cues.utils`.
 
 import math
 import platform
+from types import FunctionType
 
 import pytest
 
@@ -41,6 +42,11 @@ def test_get_half():
     expected_result = math.ceil(number / 2)
 
     assert utils.get_half(number) == expected_result
+
+
+def test_get_listen_function():
+    listen_function = utils.get_listen_function()
+    assert isinstance(listen_function, FunctionType)
 
 
 def test_get_max_len():

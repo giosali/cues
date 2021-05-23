@@ -24,10 +24,23 @@ import cues.listen.windows as windows
 
 @pytest.mark.skipif(platform.system() != 'Windows', reason='OS must be Windows')
 def test_listen(monkeypatch):
-    monkeypatch.setattr('msvcrt.getch', lambda: ansi.CTRL_C)
+    character = 'a'
 
-    key = msvcrt.getch()
-    assert key == ansi.CTRL_C
+    def mock_getch_return():
+        return character
+
+    monkeypatch.setattr(msvcrt, 'getch', mock_getch_return)
+
+    x = windows.listen()
+    assert x == ord(character)
+
+
+# @pytest.mark.skipif(platform.system() != 'Windows', reason='OS must be Windows')
+# def test_listen(monkeypatch):
+#     monkeypatch.setattr('msvcrt.getch', lambda: ansi.CTRL_C)
+
+#     key = msvcrt.getch()
+#     assert key == ansi.CTRL_C
 
 
 @pytest.mark.skipif(platform.system() != 'Windows', reason='OS must be Windows')
@@ -84,10 +97,22 @@ def test_update_coord():
     assert windows_get_coord_obj.Y == dummy_y
 
 
-# @pytest.mark.skipif(platform.system() != 'Windows', reason='OS must be Windows')
-# def test_get_console_cursor_position():
-#     stdout_handle = windows.get_std_handle(-11)
+@pytest.mark.skipif(platform.system() != 'Windows', reason='OS must be Windows')
+def test_get_console_cursor_position(monkeypatch):
+    monkeypatch.setattr(
+        windll.kernel32, 'GetConsoleScreenBufferInfo', lambda _, __: True)
 
-#     # Note: This throws an AssertionError if you use pytest but don't include the
-#     # -s flag to capture stdout output:
-#     assert windows.get_console_cursor_position(stdout_handle) is not None
+    x = windows.get_console_cursor_position(None)
+    assert isinstance(x, windows.COORD)
+
+
+@pytest.mark.skipif(platform.system() != 'Windows', reason='OS must be Windows')
+def test_set_console_cursor_position(monkeypatch):
+    def mock_set_console_cursor_position_return(_, __):
+        return None
+
+    monkeypatch.setattr(
+        windll.kernel32, 'SetConsoleCursorPosition', mock_set_console_cursor_position_return)
+
+    x = windows.set_console_cursor_position(None, None)
+    assert x is None

@@ -64,6 +64,7 @@ def get_std_handle(designation: int):
     A designation of -11 == stdout
     A designation of -12 == stderr
     """
+
     if not -12 <= designation <= -10:
         raise ValueError('Designation must be between -10 and -12')
 
@@ -74,6 +75,7 @@ def get_coord(x: int, y: int) -> COORD:
     """
     Instantiates and returns a COORD object.
     """
+
     if x < 0 or y < 0:
         raise ValueError(
             f'Coordinates cannot be less than 0: x = {x}, y = {y}')
@@ -87,6 +89,7 @@ def update_coord(coord: COORD, x: int = 0, y: int = 0):
     Returns None. It simply modifies a given COORD object's X and Y member variables.
     Essentially, `coord` is treated as an output parameter.
     """
+
     if x:
         coord.X = x
     if y:
@@ -102,6 +105,7 @@ def get_console_cursor_position(handle) -> CONSOLE_SCREEN_BUFFER_INFO.dwCursorPo
     :rtype: CONSOLE_SCREEN_BUFFER_INFO.dwCursorPosition
     :returns: The cursor.
     """
+
     csbi = CONSOLE_SCREEN_BUFFER_INFO()
     # Checks if console is open:
     if windll.kernel32.GetConsoleScreenBufferInfo(handle, byref(csbi)):
@@ -114,4 +118,5 @@ def set_console_cursor_position(handle, coord: COORD):
 
     :param windll.kernel32.GetStdHandle handle: A handle.
     """
+
     windll.kernel32.SetConsoleCursorPosition(handle, coord)
