@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # 8888888b.                                         888
 # 888   Y88b                                        888
 # 888    888                                        888
@@ -27,7 +29,6 @@ from .__version__ import (
 if '-m' not in sys.argv:
     from .checkbox import Checkbox
     from .confirm import Confirm
-    from .cue import Cue
     from .form import Form
     from .select import Select
     from .survey import Survey

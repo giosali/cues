@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 cues.utils
 ==========
@@ -7,6 +9,8 @@ This module contains useful, general functions.
 
 import math
 import platform
+import re
+from typing import List
 
 from .listen import ansi, windows, unix
 
@@ -106,6 +110,19 @@ def get_listen_function() -> windows.listen or unix.listen:
     return unix.listen
 
 
+def get_cursor_position():
+    if is_windows():
+        return windows.get_console_cursor_position(windows.get_std_handle(-11))
+    return read_pos(unix.listen(unix.get_pos()))
+
+
+def read_pos(pos: str) -> List[int]:
+    pattern = r'(\d+)'
+    positions_str = re.findall(pattern, pos)
+    positions_int = [int(i) for i in positions_str]
+    return positions_int
+
+
 def get_max_len(lis: list) -> tuple:
     """Returns max length of str objects in a list and its index.
 
@@ -131,3 +148,13 @@ def get_max_len(lis: list) -> tuple:
             maxi = elem_len
             count += 1
     return (maxi, count)
+
+
+def insert(char: str, text: str, index: int) -> str:
+    new_text = text[:index] + char + text[index:]
+    return new_text
+
+
+def delete(text: str, index: int) -> str:
+    new_text = text[:index - 1] + text[index:]
+    return new_text

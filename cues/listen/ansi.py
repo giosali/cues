@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 cues.listen.ansi
 ================
@@ -48,6 +50,8 @@ MOVE_UP = '\x1b[{}A'  # Moves cursor up # of times
 MOVE_DOWN = '\x1b[{}B'  # Moves cursor down # of times
 MOVE_RIGHT = '\x1b[{}C'  # Moves cursor to the right # of times
 MOVE_LEFT = '\x1b[{}D'  # Moves cursor to the left # of times
+
+CURSOR_POS = '\x1b[6n'  # Gets current cursor position #ROW;#COLR
 
 
 # Erase functions:

@@ -1,46 +1,58 @@
+# -*- coding: utf-8 -*-
+
 """
 cues.cue
-=========
+========
 
-A module that contains the class for creating and instantiating `Cue` objects.
+This module contains the class for creating and instantiating `Cue` objects.
 """
 
 import subprocess
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from collections import deque
 from typing import Deque
 
 from . import utils
+from .canvas import Canvas
 
 
-class Cue(ABC):
+class Cue(Canvas):
     """The abstract base class for all child Cue objects.
 
-    This class contains abstract methods so you cannot instantiate this object.
+    Note
+    ----
+    This class contains abstractmethods which means you should not instantiate
+    it.
 
-    Parameters
+    Attributes
     ----------
-    name : str
-        A str object to retrieve the user's input once formatted in a dict
-        object.
-    message : str
-        A str object that displays useful information for the user to the
-        console.
+    _name : str
+        The name of the Cue instance.
+    _message : str
+        Instructions or useful information regarding the prompt for the user.
+    keys : dict
+        Blend of different keypresses.
+    listen_for_key : FunctionType
+        Function that listens for keypresses based on OS.
+    _answer : dict
+        The answer to return once the user successfully responds to a Cue object.
     """
 
     __name__ = 'Cue'
-    __module__ = 'cue'
+    __module__ = 'cues'
 
     def __init__(self, name: str, message: str):
-        """Inits a Cue child class with `name` and `message`.
-
-        Attributes
-        ----------
-        _answer : None
-            Defaults to None.
-            Can be interacted with as a property attribute (getter, setter)
-            and is intended to be returned as a dict object.
         """
+
+        Parameters
+        ----------
+        name
+            The name of the Cue instance.
+        message
+            Instructions or useful information regarding the prompt for the user.
+        """
+
+        super().__init__()
 
         # Enables color in the console for Windows machines:
         if utils.is_windows():
@@ -55,6 +67,11 @@ class Cue(ABC):
             self._message = message
         else:
             raise TypeError(f"'{type(message)}' object is not a str object")
+
+        # Gathers all possible key presses into a dict:
+        self.keys = utils.get_keys()
+        # Chooses which key listening function to use based on OS:
+        self.listen_for_key = utils.get_listen_function()
 
         self._answer = None
 
@@ -75,12 +92,12 @@ class Cue(ABC):
         pass
 
     @staticmethod
-    def create_deque(lis: list, length=None) -> Deque[str]:
-        """Returns a deque object.
+    def create_deque(lis: list, length: int = None) -> Deque[str]:
+        """Returns a deque object containing strings.
 
         Parameters
         ----------
-        lis : list
+        lis
             A list of objects that can be converted to str objects.
         length : int, optional
             A value that can be used to set the maxlen parameter of the deque()
@@ -88,7 +105,7 @@ class Cue(ABC):
 
         Returns
         -------
-        d : deque
+        Deque of str
             A list converted into a deque with a set maxlen.
         """
 

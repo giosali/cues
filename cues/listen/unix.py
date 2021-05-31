@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 """
 cues.listen.unix
 ================
 
-This module is for listening for keystrokes on macOS/Linux machines.
+This module is for listening for keypresses on macOS/Linux machines.
 """
 
 import select
@@ -29,20 +31,50 @@ def listen():
         # more info.
         tty.setcbreak(fd)
 
-        while True:
-            if is_data():
-                key = sys.stdin.read(1)
-
-                if key == ansi.ESC_CODE:
-                    key = sys.stdin.read(2)
-
-                    return key
-
-                return ord(key)
+        key = get_key()
+        return key
     finally:
         # Old tty attributes restored:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 
+def get_key():
+    while True:
+        if is_data():
+            key = sys.stdin.read(1)
+
+            if key == ansi.ESC_CODE:
+                key = sys.stdin.read(2)
+                return key
+
+            return ord(key)
+
+
 def is_data() -> bool:
     return select.select([sys.stdin.fileno()], [], [], 0) == ([sys.stdin.fileno()], [], [])
+
+
+def listen_for_pos():
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+
+    try:
+        # TCSANOW: change should occur immediately:
+        tty.setcbreak(fd, termios.TCSANOW)
+
+        pos = get_pos()
+        return pos
+
+    finally:
+        termios.tcsetattr(fd, termios.TCSANOW, old)
+
+
+def get_pos() -> str:
+    buffer = ''
+    sys.stdout.write(ansi.CURSOR_POS)
+    sys.stdout.flush()
+
+    while True:
+        buffer += sys.stdin.read(1)
+        if buffer.endswith('R'):
+            return buffer
