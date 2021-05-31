@@ -1,3 +1,10 @@
+# v0.2.2
+
+## Fixes
+
+* Fixed bug in `Form` cue that would use the fields' messages instead of their names when creating the response dict
+* Improved test coverage
+
 # v0.2.1
 
 ## Fixes
