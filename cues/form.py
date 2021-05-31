@@ -104,49 +104,30 @@ class Form(Cue):
         curr_row = 0
         x_cursor_pos = 0
         y_cursor_pos = 0
-        self.__num = self._num_fields
 
         while True:
             self.__set_num_rows(inputs, padding)
-            # self.update_cursor_position()
             self.__print_fields(inputs, defaults, curr_row, max_msg_len)
-            # self.__set_num_rows(inputs, padding)
 
             curr_input_len = len(inputs[curr_row])
             prev_curr_input_len = curr_input_len
 
-            # div = self.__num_rows[curr_row] - 1
             div, mod = divmod(padding + curr_input_len, self.max_columns)
 
-            # total_rows = sum(self.__num_rows)
             total_rows = self._num_fields
             x_displacement = (mod or self.max_columns) - x_cursor_pos
-            # x_displacement = curr_input_len - x_cursor_pos
             y_displacement = y_cursor_pos - sum(self.__num_rows[curr_row + 1:])
             if x_displacement < 0:
                 temp_div, temp_mod = divmod(
                     abs(x_displacement), self.max_columns)
                 if temp_mod:
                     temp_div += 1
-                # temp_div += 1
-                # if not temp_mod:
-                #     temp_div -= 1
                 x_displacement = divmod(
                     padding + curr_input_len - mod - abs(x_displacement), self.max_columns)[1]
                 y_displacement -= temp_div
 
-                # add_y, x_displacement = divmod(
-                #     padding + curr_input_len - mod - abs(x_displacement), self.max_columns)
-                # y_displacement -= (add_y or 1)
-                #
-                #
-                # temp_curr_input_len = padding + curr_input_len - mod
-                # y_displacement -= 1
-                # x_displacement = temp_curr_input_len - abs(x_displacement)
             cursor.move(x=x_displacement,
                         y=total_rows - y_displacement)
-            # cursor.move(x=(mod if div and mod else padding + x_displacement),
-            #             y=total_rows - y_displacement)
 
             key = self.listen_for_key()
 
@@ -193,51 +174,27 @@ class Form(Cue):
             else:
                 inputs[curr_row] = utils.insert(
                     chr(key), inputs[curr_row], len(inputs[curr_row]) - x_cursor_pos)
-                # if x_displacement < 0 and not mod:
-                #     y_displacement -= 1
-                #
-                #
-                # inputs[curr_row] = utils.insert(
-                #     chr(key), inputs[curr_row], x_displacement)
 
             # Drops cursor below all main_fmt:
             cursor.move(x=-self.max_columns,
                         y=-total_rows + y_displacement)
 
             y_delta = self._num_fields + sum(self.__num_rows)
-            #
-            # prev_y_pos = self.y
-            # self.update_cursor_position()
-            # y_delta = self.y - prev_y_pos
 
             if not prev_curr_input_len and len(inputs[curr_row]):
                 # Refreshes output to remove traces of default messages:
                 cursor.clear(y_delta)
-                # cursor.clear(total_rows +
-                #              sum(self.__num_rows[curr_row + 1:]) + div)
             elif div and not mod:
                 cursor.clear(y_delta)
-                # cursor.clear(total_rows + (div - 1) +
-                #              sum(self.__num_rows[:curr_row + 1]))
             else:
                 # Puts cursor just below init_fmt:
                 cursor.move(y=y_delta)
-                # cursor.move(y=total_rows +
-                #             sum(self.__num_rows[:curr_row + 1]))
-                #
-                #
-                # cursor.move(y=total_rows + (div if mod else div - 1))
 
         answer = {self._name: {}}
         for i, f in zip(inputs, self._fields):
             answer.get(self._name).update(
-                {f['message']: i or f.get('default', '')})
+                {f['name']: i or f.get('default', '')})
         self.answer = answer
-
-        #
-        #
-        #
-        #
 
     def __print_fields(self, inputs: list, defaults: list, curr_row: int,
                        max_msg_len: int):
@@ -304,11 +261,6 @@ class Form(Cue):
             div, mod = divmod(len(i) + padding, self.max_columns)
             num_rows.append(div if mod else div - 1)
         self.__num_rows = num_rows
-        #
-        # self.__num_rows = [
-        #     divmod(len(i) + padding, self.max_columns)[0] for i in inputs]
-        #
-        # self.__num_rows = [self.__num]
 
     def __reset_values(self, *args):
         return (0 for _ in range(len(args)))
@@ -335,7 +287,7 @@ class Form(Cue):
         return cls(name, message, fields)
 
 
-def main(test=0):
+def main():
     name = 'basic_info'
     message = 'Please fill out the following form:'
     fields = [
@@ -355,11 +307,10 @@ def main(test=0):
         }
     ]
 
-    if not test:
-        prompt = Form(name, message, fields)
-        answer = prompt.send()
-        print(answer)
+    prompt = Form(name, message, fields)
+    answer = prompt.send()
+    print(answer)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()
