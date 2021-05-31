@@ -1,12 +1,13 @@
+# -*- coding: utf-8 -*-
+
 """
 cues.form
 =========
 
-A module that contains the Form class.
+This module contains the Form class.
 """
 
-import shutil
-from typing import Deque, Iterable, List
+from typing import Iterable
 
 from . import constants, cursor, utils
 from .cue import Cue
@@ -15,51 +16,41 @@ from .cue import Cue
 class Form(Cue):
     """Construct a Form object to retrieve several responses from a user.
 
-    A Form object will display a form-like prompt to the user
-    and ask the user to answer corresponding questions. The user 
-    can type their answers and use Up and Down arrow keys and the 
-    Enter key to navigate the form.
+    Form objects can be used to display a form-like prompt to the 
+    user and ask the user to answer corresponding questions. The user 
+    can type their answers and use the up and down arrow keys and the 
+    ENTER key to navigate the form.
 
-    Parameters
+    Attributes
     ----------
-    name : str
-        A str object to retrieve the user's input once formatted in a dict
-        object.
-    message : str
-        A str object that displays useful information for the user to the
-        console.
-    fields : iterable of dict
-        An iterable of dict objects that contain information about the form
-        questions.
     _init_fmt : str
-        A str object with the format for the initial statement.
+        The format for the initial statement.
     _main_fmt : str
-        A str object with the format for the fields.
+        The format for the fields.
+    _main_fmt_len : int
+        The length of the _main_fmt devoid of color.
     _msg_fmt : str
-        A str object with the format for messages in active fields.
+        The format for the current active field's message.
     _default_fmt : str
-        A str object with the fomrat for default messages.
+        The format for fields' default message (if there is one).
+    _num_fields : int
+        The number of fields.
     """
 
     __name__ = 'Form'
-    __module__ = 'form'
+    __module__ = 'cues'
 
     def __init__(self, name: str, message: str, fields: Iterable[dict]):
-        """Inits a Form class with `name`, `message`, and `fields`.
+        """
 
-        Attributes
+        Parameters
         ----------
-        _fields : list of dict
-            A list object containing dicts (fields) to construct a form.
-        _init_fmt : str
-            A str object with the format for the initial statement.
-        _main_fmt : str
-            A str object with the format for the frame of the form.
-        _msg_fmt : str
-            A str object with the format for the form's messages. This is
-            also used to highlight messages.
-        _default_fmt : str
-            A str object with the format for default messages.
+        name
+            The name of the Form instance.
+        message
+            Instructions or useful information regarding the prompt for the user.
+        fields
+            Contains questions/information for the user to respond to.
         """
 
         super().__init__(name, message)
@@ -71,151 +62,256 @@ class Form(Cue):
 
         self._init_fmt = '[pink][?][/pink] {message}\n'
         self._main_fmt = '[skyblue]{marker}[/skyblue]  {:>{len}} [grey]∙[/grey] {text}\n'
+        self._main_fmt_len = 6
         self._msg_fmt = '[lightslateblue]{}[/lightslateblue]'
         self._default_fmt = '[darkgrey]{}[/darkgrey]'
+
+        self._num_fields = len(self._fields)
 
     def send(self):
         """Returns a dict object containing user's response to the prompt.
 
         Returns
         -------
-        self.answer : dict
-            A dict containing the user's response to the prompt.
+        dict
+            Contains the user's response to the prompt.
         """
 
         self._draw()
         return self.answer
 
     def _draw(self):
-        """Prints the prompt to console and sets user's response.
+        """Assembles and prints the form prompt to the console.
         """
 
         cursor.write(self._init_fmt.format(message=self._message), color=True)
 
-        # Determines how much space to give for the fields' messages:
-        max_msg_len = max(len(msg['message']) for msg in self._fields)
-        # min_col will be used for the horizontal starting point
-        # The six comes from manually counting the spaces in
-        # self._main_fmt. There's probably a better way of doing this.
-        min_col = max_msg_len + 6
+        up = self.keys.get('up')
+        down = self.keys.get('down')
+        left = self.keys.get('left')
+        right = self.keys.get('right')
+        enter = self.keys.get('enter')
+        backspace = self.keys.get('backspace')
 
-        # Chooses which key listening function to use based on OS:
-        listen_for_key = utils.get_listen_function()
+        inputs = ['' for _ in range(self._num_fields)]
+        max_msg_len = max(len(field.get('message')) for field in self._fields)
+        # The total space taken up by self._main_fmt:
+        padding = max_msg_len + self._main_fmt_len
 
-        keys = utils.get_keys()
-        up = keys.get('up')
-        down = keys.get('down')
-        enter = keys.get('enter')
-        backspace = keys.get('backspace')
-
-        # Starting position for the cursor, in terms of the number of rows **from
-        # the bottom**, should be equal to the number of fields in the form, assuming
-        # each field only takes a line of space:
-        num_fields = len(self._fields)
-        row_num = num_fields
-        prev_row_num = row_num
-
-        max_num_cols = shutil.get_terminal_size().columns
-
-        # Records the characters entered by user:
-        usr_inputs = ['' for _ in range(num_fields)]
-
-        # Color the default messages:
         defaults = [
             self._default_fmt.format(field.get('default', '')) for field in self._fields]
 
-        curr_row_pos = num_fields - row_num
-        row_spans = [0 for _ in range(num_fields)]
-        superficial_row_num = 0
+        curr_row = 0
+        x_cursor_pos = 0
+        y_cursor_pos = 0
+        self.__num = self._num_fields
 
         while True:
-            # Prints the fields to the console:
-            for c, field in enumerate(self._fields):
-                msg = field['message']
-                msg_diff = 0
-                if c == curr_row_pos:
-                    init_msg_len = len(msg)
-                    msg = self._msg_fmt.format(msg)
-                    msg_diff = len(msg) - init_msg_len
+            self.__set_num_rows(inputs, padding)
+            # self.update_cursor_position()
+            self.__print_fields(inputs, defaults, curr_row, max_msg_len)
+            # self.__set_num_rows(inputs, padding)
 
-                marker = constants.FORM_MARKER_COM if usr_inputs[c] else constants.FORM_MARKER_UNC
-                text = usr_inputs[c] or defaults[c]
+            curr_input_len = len(inputs[curr_row])
+            prev_curr_input_len = curr_input_len
 
-                cursor.write(self._main_fmt.format(
-                    msg, marker=marker, len=max_msg_len + msg_diff, text=text), color=True)
+            # div = self.__num_rows[curr_row] - 1
+            div, mod = divmod(padding + curr_input_len, self.max_columns)
 
-            # Sets where the cursor should be:
-            curr_input_len = len(usr_inputs[curr_row_pos]) + min_col
-            curr_input_row_span = 0
-            while curr_input_len > max_num_cols:
-                curr_input_row_span += 1
-                curr_input_len -= max_num_cols
-            row_spans[curr_row_pos] = curr_input_row_span
+            # total_rows = sum(self.__num_rows)
+            total_rows = self._num_fields
+            x_displacement = (mod or self.max_columns) - x_cursor_pos
+            # x_displacement = curr_input_len - x_cursor_pos
+            y_displacement = y_cursor_pos - sum(self.__num_rows[curr_row + 1:])
+            if x_displacement < 0:
+                temp_div, temp_mod = divmod(
+                    abs(x_displacement), self.max_columns)
+                if temp_mod:
+                    temp_div += 1
+                # temp_div += 1
+                # if not temp_mod:
+                #     temp_div -= 1
+                x_displacement = divmod(
+                    padding + curr_input_len - mod - abs(x_displacement), self.max_columns)[1]
+                y_displacement -= temp_div
 
-            cursor.move(curr_input_len, row_num + superficial_row_num)
+                # add_y, x_displacement = divmod(
+                #     padding + curr_input_len - mod - abs(x_displacement), self.max_columns)
+                # y_displacement -= (add_y or 1)
+                #
+                #
+                # temp_curr_input_len = padding + curr_input_len - mod
+                # y_displacement -= 1
+                # x_displacement = temp_curr_input_len - abs(x_displacement)
+            cursor.move(x=x_displacement,
+                        y=total_rows - y_displacement)
+            # cursor.move(x=(mod if div and mod else padding + x_displacement),
+            #             y=total_rows - y_displacement)
 
-            # Used to access `usr_inputs`:
-            curr_row_pos = num_fields - row_num
-            prev_curr_row_pos = curr_row_pos
-            superficial_row_num = 0
-
-            key = listen_for_key()
+            key = self.listen_for_key()
 
             if key == up:
-                # If cursor pos is at the very top:
-                if row_num == num_fields:
-                    pass
-                else:
-                    row_num += 1
-                    curr_row_pos = num_fields - row_num
+                if y_cursor_pos:
+                    y_cursor_pos -= 1
+                    curr_row -= 1
+                    curr_input_len, prev_curr_input_len, x_cursor_pos = self.__reset_values(
+                        curr_input_len, prev_curr_input_len, x_cursor_pos)
+
             elif key == down:
-                # If cursor pos is at the very bottom:
-                if row_num == 1:
-                    pass
-                else:
-                    row_num -= 1
-                    curr_row_pos = num_fields - row_num
+                if y_cursor_pos != (total_rows - 1):
+                    y_cursor_pos += 1
+                    curr_row += 1
+                    curr_input_len, prev_curr_input_len, x_cursor_pos = self.__reset_values(
+                        curr_input_len, prev_curr_input_len, x_cursor_pos)
+
+            elif key == left:
+                if x_cursor_pos != curr_input_len:
+                    x_cursor_pos += 1
+
+            elif key == right:
+                if x_cursor_pos:
+                    x_cursor_pos -= 1
+
             elif key == backspace:
-                # Get the input at the current line/row:
-                curr_input = usr_inputs[curr_row_pos]
-                # Replace it with curr_input but remove one char at the end:
-                usr_inputs[curr_row_pos] = curr_input[:len(curr_input) - 1]
+                if curr_input_len - x_cursor_pos:
+                    inputs[curr_row] = utils.delete(
+                        inputs[curr_row], curr_input_len - x_cursor_pos)
+                    prev_curr_input_len = 0
+
             elif key == enter:
-                # If `enter` is pressed on last row, quit
-                if row_num == 1:
-                    sum_row_spans = sum(
-                        i for c, i in enumerate(row_spans) if c > prev_curr_row_pos)
-                    cursor.move(-max_num_cols, -prev_row_num - sum_row_spans)
-                    cursor.clear(num_fields + sum(row_spans))
+                if y_cursor_pos == (total_rows - 1):
+                    cursor.move(x=-self.max_columns,
+                                y=-total_rows + y_displacement)
+                    cursor.clear(self._num_fields + sum(self.__num_rows))
                     break
-                # Else move cursor down a row:
-                row_num -= 1
-                curr_row_pos = num_fields - row_num
+
+                y_cursor_pos += 1
+                curr_row += 1
+                curr_input_len, prev_curr_input_len, x_cursor_pos = self.__reset_values(
+                    curr_input_len, prev_curr_input_len, x_cursor_pos)
+
             else:
-                usr_inputs[curr_row_pos] += chr(key)
+                inputs[curr_row] = utils.insert(
+                    chr(key), inputs[curr_row], len(inputs[curr_row]) - x_cursor_pos)
+                # if x_displacement < 0 and not mod:
+                #     y_displacement -= 1
+                #
+                #
+                # inputs[curr_row] = utils.insert(
+                #     chr(key), inputs[curr_row], x_displacement)
 
-            # Gets proper number of rows to adjust Y coordinate:
-            for c, i in enumerate(row_spans):
-                if c > curr_row_pos:
-                    superficial_row_num += row_spans[c]
+            # Drops cursor below all main_fmt:
+            cursor.move(x=-self.max_columns,
+                        y=-total_rows + y_displacement)
 
-            # Drops cursor at the bottom:
-            sum_row_spans = sum(
-                i for c, i in enumerate(row_spans) if c > prev_curr_row_pos)
-            cursor.move(-max_num_cols, -prev_row_num - sum_row_spans)
+            y_delta = self._num_fields + sum(self.__num_rows)
+            #
+            # prev_y_pos = self.y
+            # self.update_cursor_position()
+            # y_delta = self.y - prev_y_pos
 
-            prev_row_num = row_num
+            if not prev_curr_input_len and len(inputs[curr_row]):
+                # Refreshes output to remove traces of default messages:
+                cursor.clear(y_delta)
+                # cursor.clear(total_rows +
+                #              sum(self.__num_rows[curr_row + 1:]) + div)
+            elif div and not mod:
+                cursor.clear(y_delta)
+                # cursor.clear(total_rows + (div - 1) +
+                #              sum(self.__num_rows[:curr_row + 1]))
+            else:
+                # Puts cursor just below init_fmt:
+                cursor.move(y=y_delta)
+                # cursor.move(y=total_rows +
+                #             sum(self.__num_rows[:curr_row + 1]))
+                #
+                #
+                # cursor.move(y=total_rows + (div if mod else div - 1))
 
-            # In case text overflow occurs:
-            cursor.clear(num_fields + sum(row_spans))
+        answer = {self._name: {}}
+        for i, f in zip(inputs, self._fields):
+            answer.get(self._name).update(
+                {f['message']: i or f.get('default', '')})
+        self.answer = answer
 
-        for c, i in enumerate(usr_inputs):
-            if not i:
-                usr_inputs[c] = self._fields[c].get('default', '')
+        #
+        #
+        #
+        #
 
-        field_names = [field['name'] for field in self._fields]
-        self.answer = {self._name: {name: i for name,
-                                    i in zip(field_names, usr_inputs)}}
+    def __print_fields(self, inputs: list, defaults: list, curr_row: int,
+                       max_msg_len: int):
+        """Prints the fields to the console.
+
+        Parameters
+        ----------
+        inputs
+            Current responses from the user.
+        defaults
+            The default strings for each field.
+        curr_row
+            The current field that is currently in focus.
+        max_msg_len
+            The message among the fields with the largest length.
+        """
+
+        for c, field, in enumerate(self._fields):
+            # If we're on the current row, then give the message color:
+            msg = field.get('message')
+            if curr_row == c:
+                # Get the length before the message is colored:
+                msg_len = len(msg)
+                msg = self._msg_fmt.format(field.get('message'))
+                # Then get the lenght after the message is colored:
+                color_msg_len = len(msg)
+                color_msg_diff = color_msg_len - msg_len
+            else:
+                color_msg_diff = 0
+
+            # If the current input has content, then give it a filled marker
+            # otherwise, give it an empty marker:
+            marker = constants.FORM_MARKER_COM if inputs[c] else constants.FORM_MARKER_UNC
+            # For each input that's empty, replace it with one of the defaults:
+            text = inputs[c] or defaults[c]
+
+            cursor.write(self._main_fmt.format(
+                msg, marker=marker, len=max_msg_len + color_msg_diff, text=text), color=True)
+
+    def __set_num_rows(self, inputs: list, padding: int):
+        """Sets the number of additional rows based on inputs.
+
+        This private method will calculate the number of additional rows that each
+        current field's input takes up. It uses the maximum number of columns available
+        to calculate excess rows.
+
+        Note
+        ----
+        An excess row is only counted if there is a remainder. In other words, if there
+        are is an input that amounts to 120 while the maximum number of columns is also
+        120, the number of excess rows will still be 0 since ``120 % 120 == 0``.
+
+        Parameters
+        ----------
+        inputs
+            Current responses from the user.
+        padding
+            The total number of columns taken up by the message among the fields with the
+            largest length and ``self._main_fmt``.
+        """
+
+        num_rows = []
+        for i in inputs:
+            div, mod = divmod(len(i) + padding, self.max_columns)
+            num_rows.append(div if mod else div - 1)
+        self.__num_rows = num_rows
+        #
+        # self.__num_rows = [
+        #     divmod(len(i) + padding, self.max_columns)[0] for i in inputs]
+        #
+        # self.__num_rows = [self.__num]
+
+    def __reset_values(self, *args):
+        return (0 for _ in range(len(args)))
 
     @classmethod
     def from_dict(cls, prompt: dict):
@@ -223,8 +319,8 @@ class Form(Cue):
 
         Parameters
         ----------
-        prompt : dict
-            A dict object that contains a name key, a message key, and a
+        prompt
+            A dict that contains a name key, a message key, and a
             fields key.
 
         Returns

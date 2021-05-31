@@ -138,6 +138,7 @@ class TestSurvey:
     # def test__draw(self):
     #     cue = Survey(self.name, self.message, self.scale, self.fields)
 
+    #     print()
     #     answer = cue.send()
     #     print(answer)
 
@@ -145,6 +146,7 @@ class TestSurvey:
     #     cue = Survey(self.name, self.message, self.scale,
     #                  self.fields, self.legend)
 
+    #     print()
     #     answer = cue.send()
     #     print(answer)
 
@@ -152,6 +154,7 @@ class TestSurvey:
     #     cue = Survey(self.name, self.message, self.scale,
     #                  self.fields, self.legend_two)
 
+    #     print()
     #     answer = cue.send()
     #     print(answer)
 
@@ -159,6 +162,7 @@ class TestSurvey:
     #     cue = Survey(self.name, self.message,
     #                  self.scale_with_equal_descs, self.fields)
 
+    #     print()
     #     answer = cue.send()
     #     print(answer)
 
