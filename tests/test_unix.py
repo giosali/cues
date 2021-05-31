@@ -21,7 +21,6 @@ except ModuleNotFoundError:
 
 import pytest
 
-import cues.utils as utils
 import cues.listen.unix as unix
 
 
@@ -71,13 +70,6 @@ def test_get_key_when_key_is_esc(monkeypatch):
     assert x == character
 
 
-def test_read_pos():
-    nums = [10, 6]
-    pos = '\x1b[{};{}R'.format(*nums)
-    filtered_nums = utils.read_pos(pos)
-    assert filtered_nums == nums
-
-
 @pytest.mark.skipif(platform.system() == 'Windows', reason='OS must not be Windows')
 def test_is_data(monkeypatch):
     monkeypatch.setattr(sys.stdin, 'fileno', lambda: None)
@@ -85,3 +77,39 @@ def test_is_data(monkeypatch):
 
     x = unix.is_data()
     assert x is False
+
+
+@pytest.mark.skipif(platform.system() == 'Windows', reason='OS must not be Windows')
+def test_listen_for_pos(monkeypatch):
+    def generic_return_none(*args, **kwargs):
+        return None
+
+    def mock_read_return():
+        nums = [10, 6]
+        pos = '\x1b[{};{}R'.format(*nums)
+        return pos
+
+    monkeypatch.setattr(sys.stdin, 'fileno', generic_return_none)
+    monkeypatch.setattr(termios, 'tcgetattr', lambda _: 0)
+    monkeypatch.setattr(tty, 'setcbreak', generic_return_none)
+    monkeypatch.setattr(unix, 'get_pos', mock_read_return)
+    monkeypatch.setattr(termios, 'tcsetattr', lambda _, __, ___: 0)
+
+    assert unix.listen_for_pos() == '\x1b[10;6R'
+
+
+@pytest.mark.skipif(platform.system() == 'Windows', reason='OS must not be Windows')
+def test_get_pos(monkeypatch):
+    def generic_return_none(*args, **kwargs):
+        return None
+
+    def mock_read_return(_):
+        nums = [10, 6]
+        pos = '\x1b[{};{}R'.format(*nums)
+        return pos
+
+    monkeypatch.setattr(sys.stdout, 'write', generic_return_none)
+    monkeypatch.setattr(sys.stdout, 'flush', generic_return_none)
+    monkeypatch.setattr(sys.stdin, 'read', mock_read_return)
+
+    assert unix.get_pos() == '\x1b[10;6R'

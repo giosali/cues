@@ -55,3 +55,10 @@ def test_get_max_len():
     index = lis.index('hello')
 
     assert utils.get_max_len(lis) == (maxi, index)
+
+
+def test_read_pos():
+    nums = [10, 6]
+    pos = '\x1b[{};{}R'.format(*nums)
+    filtered_nums = utils.read_pos(pos)
+    assert filtered_nums == nums

@@ -84,14 +84,10 @@ class Checkbox(Cue):
         cursor.write(self._init_fmt.format(
             message=self._message), color=True, newlines=1)
 
-        # Chooses which key listening function to use based on OS:
-        listen_for_key = utils.get_listen_function()
-
-        keys = utils.get_keys()
-        up = keys.get('up')
-        down = keys.get('down')
-        space = keys.get('space')
-        enter = keys.get('enter')
+        up = self.keys.get('up')
+        down = self.keys.get('down')
+        space = self.keys.get('space')
+        enter = self.keys.get('enter')
 
         # Get appropriate num of markers based on num of options:
         num_options = len(self._options)
@@ -108,7 +104,7 @@ class Checkbox(Cue):
                 cursor.write(fmt.format(
                     marker=marker, option=option), color=True, newlines=1)
 
-            key = listen_for_key()
+            key = self.listen_for_key()
 
             if key == up:
                 if not curr_row_diff:
@@ -163,7 +159,7 @@ class Checkbox(Cue):
         return cls(name, message, options)
 
 
-def main(test=0):
+def main():
     name = 'guitars'
     message = 'Pick your favorite guitars:'
     options = [
@@ -176,11 +172,10 @@ def main(test=0):
         'Classical',
     ]
 
-    if not test:
-        cue = Checkbox(name, message, options)
-        answer = cue.send()
-        print(answer)
+    cue = Checkbox(name, message, options)
+    answer = cue.send()
+    print(answer)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()

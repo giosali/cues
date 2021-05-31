@@ -7,7 +7,7 @@ A testing module for `cues.survey`.
 
 import pytest
 
-from cues import survey
+from cues import cursor, survey
 from cues.survey import Survey
 
 
@@ -72,7 +72,7 @@ class TestSurvey:
             'fields': self.fields
         }
 
-    def test__init__(self):
+    def test_init(self):
         cue = Survey(self.name, self.message, self.scale, self.fields)
 
         assert cue._name == self.name
@@ -81,7 +81,7 @@ class TestSurvey:
         assert cue._scale == self.scale
         assert cue._fields == self.fields
 
-    def test__init__with_scale_with_equal_descs(self):
+    def test_init_with_scale_with_equal_descs(self):
         cue = Survey(self.name, self.message,
                      self.scale_with_equal_descs, self.fields)
 
@@ -92,7 +92,7 @@ class TestSurvey:
         assert cue._fields == self.fields
         assert cue._legend == list(self.scale_with_equal_descs.values())
 
-    def test__init__with_legend(self):
+    def test_init_with_legend(self):
         cue = Survey(self.name, self.message, self.scale,
                      self.fields, self.legend)
 
@@ -103,7 +103,7 @@ class TestSurvey:
         assert cue._fields == self.fields
         assert cue._legend == self.legend
 
-    def test__init__with_legend_two(self):
+    def test_init_with_legend_two(self):
         cue = Survey(self.name, self.message, self.scale,
                      self.fields, self.legend_two)
 
@@ -123,6 +123,38 @@ class TestSurvey:
             Survey(self.name, self.message, 1, self.fields)
         with pytest.raises(TypeError):
             Survey(self.name, self.message, self.scale, 1)
+
+    def test_send(self, monkeypatch):
+        cue = Survey(self.name, self.message, self.scale, self.fields)
+
+        monkeypatch.setattr(cue, '_draw', lambda: None)
+        assert cue.answer is None
+
+    def test_draw_without_legend(self, monkeypatch):
+        cue = Survey(self.name, self.message, self.scale, self.fields)
+        right = cue.keys.get('right')
+        left = cue.keys.get('left')
+        enter = cue.keys.get('enter')
+
+        def generic_return_none(*args, **kwargs):
+            return None
+
+        moves = [right, right, left, left, left, left, left,
+                 right, right, enter, enter, enter, enter, enter]
+
+        def mock_listen_for_key():
+            if moves:
+                return moves.pop(0)
+
+        monkeypatch.setattr(cursor, 'write', generic_return_none)
+        monkeypatch.setattr(cursor, 'move', generic_return_none)
+        monkeypatch.setattr(cue, 'listen_for_key', mock_listen_for_key)
+
+        responses = {}
+        for field in self.fields:
+            responses.update({field['name']: self.scale[2]})
+        assert cue._draw() is None
+        assert cue.answer == {self.name: responses}
 
     def test_from_dict(self):
         cue = Survey.from_dict(self.dic)
@@ -167,5 +199,6 @@ class TestSurvey:
     #     print(answer)
 
 
-def test_main():
-    assert survey.main(1) == None
+def test_main(monkeypatch):
+    monkeypatch.setattr(Survey, 'send', lambda _: None)
+    assert survey.main() is None

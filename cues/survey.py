@@ -202,13 +202,9 @@ class Survey(Cue):
 
         cursor.move(y=current_field)
 
-        # Chooses which key listening function to use based on OS:
-        listen_for_key = utils.get_listen_function()
-
-        keys = utils.get_keys()
-        right = keys.get('right')
-        left = keys.get('left')
-        enter = keys.get('enter')
+        right = self.keys.get('right')
+        left = self.keys.get('left')
+        enter = self.keys.get('enter')
 
         horziontal_num = center_pt
         current_val = 0
@@ -241,7 +237,7 @@ class Survey(Cue):
 
             cursor.move(y=-(current_field - 4))
 
-            key = listen_for_key()
+            key = self.listen_for_key()
 
             if key == right:
                 # If cursor is at very right:
@@ -250,6 +246,7 @@ class Survey(Cue):
                 else:
                     current_deque_pts.appendleft(constants.SURVEY_PT)
                     horziontal_num += 1
+
             elif key == left:
                 # If cursor is at very left:
                 if current_deque_pts[0] == constants.SURVEY_PT_FILL:
@@ -257,6 +254,7 @@ class Survey(Cue):
                 else:
                     current_deque_pts.append(constants.SURVEY_PT)
                     horziontal_num -= 1
+
             elif key == enter:
                 # Add current scale value to dict
                 responses.update({
@@ -331,11 +329,10 @@ def main(test=0):
         }
     ]
 
-    if not test:
-        prompt = Survey(name, message, scale, fields)
-        answer = prompt.send()
-        print(answer)
+    prompt = Survey(name, message, scale, fields)
+    answer = prompt.send()
+    print(answer)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()
