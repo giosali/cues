@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 cues.survey
 ===========
@@ -6,7 +8,7 @@ A module that contains the Survey class.
 """
 
 import copy
-from typing import Deque, Iterable, List
+from typing import Iterable
 
 from . import constants, cursor, utils
 from .cue import Cue
@@ -20,59 +22,53 @@ class Survey(Cue):
     use the Right and Left arrow keys to select an option on the scale
     and press Enter to move to the next question.
 
-    Parameters
+    Attributes
     ----------
-    name : str
-        A str object to retrieve the user's input once formatted in a dict
-        object.
-    message : str
-        A str object that displays useful information for the user to the
-        console.
-    scale : iterable
-        An iterable of objects (mainly str or int) to be used as the range
-        of the scale.
-    fields : iterable of dict
-        An iterable of dict objects that contain information about the survey
-        questions.
-    legend : iterable
-        An iterable of objects (mainly str) to be used to define the values
-        of the scale.
+    _scale : list
+        The range of the scale.
+    _fields : list
+        Contains dicts (fields) to construct a survey.
+    _legend : list
+        Contains strings that define values for _scale.
+    _legend_fmt : str
+        The format for the legend.
+    _header_fmt : str
+        The format for the legend header.
+    _space_btwn : int
+        Constant integer representing the space between legend values.
+        This is only used if there are only two legend values.
+    _total_legend_fmt_len : int
+        Represents the total space between the header.
+        This is only used if there are only two legend values.
+    _init_fmt : str
+        The format for the initial statement.
+    _msg_fmt : str
+        The format for the message.
+    _pt_fmt : str
+        The format for the number of points in the scale.
+    _scale_fmt : str
+        The format for the values of the scale.
     """
 
     __name__ = 'Survey'
-    __module__ = 'survey'
+    __module__ = 'cues'
 
     def __init__(self, name: str, message: str, scale: Iterable,
                  fields: Iterable[dict], legend: Iterable = []):
-        """Inits a Form class with `name`, `message`, `scale`, and `fields`.
+        """
 
-        Attributes
+        Parameters
         ----------
-        _scale : list of objects
-            A list of objects to use as the range for the scale.
-        _fields : list of dict
-            A list object containing dicts (fields) to construct a survey.
-        _legend : list of str
-            A list object containing str objects that defines values for
-            _scale.
-        _legend_fmt : str
-            A str object with the format for the legend.
-        _header_fmt : str
-            A str object with the format for the legend header.
-        _space_btwn : int
-            A constant integer representing the space between legend values.
-            This is only used if there are only two legend values.
-        _total_legend_fmt_len : int
-            An integer representing the total space between the header.
-            This is only used if there are only two legend values.
-        _init_fmt : str
-            A str object with the format for the initial statement.
-        _msg_fmt : str
-            A str object with the format for the message.
-        _pt_fmt : str
-            A str object with the format for the number of points in the scale.
-        _scale_fmt : str
-            A str object with the format for the values of the scale.
+        name
+            The name of the Survey instance.
+        message
+            Instructions or useful information regarding the prompt for the user.
+        scale
+            The range of the scale.
+        fields
+            Contains questions/information for the user to respond to.
+        legend : iterable, optional
+            Defines the values of the scale.
         """
 
         super().__init__(name, message)
@@ -133,7 +129,7 @@ class Survey(Cue):
 
         Returns
         -------
-        self.answer : dict
+        dict
             A dict containing the user's response to the prompt.
         """
 

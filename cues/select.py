@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 cues.select
 ===========
@@ -19,42 +21,39 @@ class Select(Cue):
     Up and Down arrow keys to navigate the prompt and select an
     option by pressing Enter.
 
-    Parameters
+    Attributes
     ----------
-    name : str
-        A str object to retrieve the user's input once formatted in a dict
-        object.
-    message : str
-        A str object that displays useful information for the user to the
-        console.
-    options : iterable of str
-        An iterable of str objects to be used as menu options for the user
-        to choose from.
+    _num_options : int
+        The number of options
+    _markers : Deque of str
+        Contains an arrow marker and empty spaces to indicate to 
+        the user which option is currently selected.
+    _select_marker_len : int
+        The length of the arrow marker being used.
+    _init_fmt : str
+        The format for the initial statement.
+    _list_fmt : str
+        The format for list items.
+    _list_fmt_if_active : str
+        The format for active list items.
     """
 
     __name__ = 'Select'
-    __module__ = 'select'
+    __module__ = 'cues'
 
     def __init__(self, name: str, message: str, options: Iterable[str]):
-        """Inits a Select class with `name`, `message`, and `option`.
-
-        Attributes
-        ----------
-        _num_options : int
-            The number of options
-        _markers : Deque of str
-            A deque of str objects that contains an arrow marker and empty
-            spaces to indicate to the user which option is currently
-            selected.
-        _select_marker_len : int
-            The length of the arrow marker being used.
-        _init_fmt : str
-            A str object with the format for the initial statement.
-        _list_fmt : str
-            A str object with the format for list items.
-        _list_fmt_if_active : str
-            A str object with the format for active list items.
         """
+
+        Parameters
+        ----------
+        name
+            The name of the Select instance.
+        message
+            Instructions or useful information regarding the prompt for the user.
+        options
+            Available options for the user to pick from.
+        """
+
         super().__init__(name, message)
 
         if hasattr(options, '__iter__'):
@@ -109,8 +108,8 @@ class Select(Cue):
 
         Returns
         -------
-        self.answer : dict
-            A dict containing the user's response to the prompt.
+        dict
+            Contains the user's response to the prompt.
         """
 
         try:
@@ -125,38 +124,32 @@ class Select(Cue):
         """Prints the prompt to console and sets user's response.
         """
 
-        # The initial statement to print (which contains the user's message):
         cursor.write(self._init_fmt.format(message=self._message), color=True)
 
-        # Chooses which key listening function to use based on OS:
-        listen_for_key = utils.get_listen_function()
-
-        keys = utils.get_keys()
-        up = keys.get('up')
-        down = keys.get('down')
-        enter = keys.get('enter')
+        up = self.keys.get('up')
+        down = self.keys.get('down')
+        enter = self.keys.get('enter')
 
         while True:
             for marker, option in zip(self.markers, self.options):
                 fmt = (self._list_fmt if marker !=
-                       constants.LIST_MARKER else self._list_fmt_if_active) + '\n'
+                       constants.LIST_MARKER else self._list_fmt_if_active)
 
                 cursor.write(fmt.format(
-                    marker=marker, option=option), color=True)
+                    marker=marker, option=option), color=True, newlines=1)
 
-            key = listen_for_key()
+            key = self.listen_for_key()
 
             if key == up:
                 self.markers = 1
             elif key == down:
                 self.markers = 0
             elif key == enter:
+                cursor.clear(self._num_options)
                 break
 
-            # Clears num of lines above the current cursor position:
-            cursor.clear(self._num_options)
+            cursor.move(y=self._num_options)
 
-        # Sets answer:
         list_marker_pos = self._markers.index(constants.LIST_MARKER)
         self.answer = {self._name: self.options[list_marker_pos]}
 

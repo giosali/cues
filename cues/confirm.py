@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 """
 cues.confirm
-==============
+============
 
-A module that contains the Confirm class.
+This module contains the Confirm class.
 """
 
 from . import cursor, utils
@@ -16,23 +18,24 @@ class Confirm(Cue):
     and ask the user to answer yes or no. The user must use the y
     key or the n key to respond.
 
-    Parameters
+    Attributes
     ----------
-    name : str
-        A str object to retrieve the user's input once formatted in a dict
-        object.
-    message : str
-        A str object that displays useful information for the user to the
-        console.
     _confirm_fmt : str
-        A str object that contains the format for the confirm prompt.
+        Format for the confirm prompt.
     """
 
     __name__ = 'Confirm'
-    __module__ = 'confirm'
+    __module__ = 'cues'
 
     def __init__(self, name: str, message: str):
-        """Inits a Confirm class with `name` and `message`.
+        """
+
+        Parameters
+        ----------
+        name
+            The name of the Confirm instance.
+        message
+            The prompt for the user.
         """
 
         super().__init__(name, message)
@@ -44,8 +47,8 @@ class Confirm(Cue):
 
         Returns
         -------
-        self.answer : dict
-            A dict containing the user's response to the prompt.
+        dict
+            Contains the user's response to the prompt.
         """
 
         try:
@@ -63,20 +66,16 @@ class Confirm(Cue):
         confirm = '(y/N)'
         end = '\r'
 
-        # Chooses which key listening function to use based on OS:
-        listen_for_key = utils.get_listen_function()
-
-        keys = utils.get_keys()
-        y = keys.get('y')
-        Y = keys.get('Y')
-        n = keys.get('n')
-        N = keys.get('N')
+        y = self.keys.get('y')
+        Y = self.keys.get('Y')
+        n = self.keys.get('n')
+        N = self.keys.get('N')
 
         cursor.write(self._confirm_fmt.format(
             prompt=self._message, confirm=confirm, r='', end=end), color=True)
 
         while True:
-            key = listen_for_key()
+            key = self.listen_for_key()
 
             if key == y or key == Y:
                 answer = True
@@ -111,14 +110,13 @@ class Confirm(Cue):
         return cls(name, message)
 
 
-def main(test=0):
+def main():
     name = 'continue'
     message = 'Are you sure you want to continue?'
 
-    if not test:
-        prompt = Confirm(name, message)
-        answer = prompt.send()
-        print(answer)
+    prompt = Confirm(name, message)
+    answer = prompt.send()
+    print(answer)
 
 
 if __name__ == '__main__':

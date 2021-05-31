@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 """
 cues.checkbox
 =============
 
-A module that contains the Checkbox class.
+This module contains the Checkbox class.
 """
 
 from typing import Iterable
@@ -19,37 +21,32 @@ class Checkbox(Cue):
     use the Up and Down arrow keys to maneuver through options, use
     the Space key to choose options, and press Enter to submit their choices.
 
-    Parameters
+    Attributes
     ----------
-    name : str
-        A str object to retrieve the user's input once formatted in a dict
-        object.
-    message : str
-        A str object that displays useful information for the user to the
-        console.
-    options : iterable of str
-        An iterable of strings to be used as the available options for the
-        user to pick from.
+     _options : list of str
+        The available options for the user to pick from.
+    _init_fmt : str
+        The format for the initial statement.
+    _list_fmt : str
+        The format for ``_options``.
+    _list_fmt_if_active : str
+        The format for the current active element in ``_options``.
     """
 
     __name__ = 'Checkbox'
     __module__ = 'cues'
 
     def __init__(self, name: str, message: str, options: Iterable[str]):
-        """Inits a Form class with `name`, `message`, `scale`, and `fields`.
+        """
 
-        Attributes
+        Parameters
         ----------
-        _options : iterable of str
-            A list of str objects to use as the available options for the user
-            to pick from.
-        _init_fmt : str
-            A str object with the format for the initial statement.
-        _list_fmt : str
-            A str object with the format for elements in _options.
-        _list_fmt_if_active : str
-            A str object with a specific list format to use if the current element
-            in _options is currently in focus.
+        name
+            The name of the Checkbox instance.
+        message
+            Instructions or useful information regarding the prompt for the user.
+        fields
+            Available options for the user to pick from.
         """
 
         super().__init__(name, message)
@@ -116,14 +113,12 @@ class Checkbox(Cue):
             if key == up:
                 if not curr_row_diff:
                     curr_row = 1
-                    # pass
                 else:
                     curr_row += 1
 
             elif key == down:
                 if curr_row_diff == num_options - 1:
                     curr_row = num_options
-                    # pass
                 else:
                     curr_row -= 1
 
@@ -152,14 +147,14 @@ class Checkbox(Cue):
 
         Parameters
         ----------
-        prompt : dict
-            A dict object that contains a name key, a message key, and an
+        prompt
+            A dict that contains a name key, a message key, and an
             options key.
 
         Returns
         -------
         cues.Checkbox
-            A Checkboc object to retrieve none, one, or more responses from a user.
+            A Checkbox object to retrieve none, one, or more responses from a user.
         """
 
         name = prompt['name']
