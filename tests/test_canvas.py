@@ -16,11 +16,20 @@ except ModuleNotFoundError:
 
 import pytest
 
+import cues.utils as utils
 from cues.canvas import Canvas
 
 
 @pytest.mark.skipif(sys.version_info < (3, 7), reason='requires Python 3.7 or higher')
-def test_canvas():
+def test_canvas(monkeypatch):
+    if utils.is_windows():
+        class Attributes:
+            X = 1
+            Y = 1
+        monkeypatch.setattr(utils, 'get_cursor_position', lambda: Attributes)
+    else:
+        monkeypatch.setattr(utils, 'get_cursor_position', lambda: [1, 1])
+
     Canvas.__abstractmethods__ = set()
 
     assert isinstance(Canvas, ABCMeta)
