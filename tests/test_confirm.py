@@ -7,7 +7,7 @@ A testing module for `cues.confirm`.
 
 import pytest
 
-from cues import confirm
+from cues import confirm, cursor
 from cues.confirm import Confirm
 
 
@@ -39,6 +39,37 @@ class TestConfirm:
         assert cue._name == self.name
         assert cue._message == self.message
 
+    def test_send(self, monkeypatch):
+        cue = Confirm(self.name, self.message)
+
+        monkeypatch.setattr(cursor, 'hide', lambda: None)
+        monkeypatch.setattr(cursor, 'show', lambda: None)
+        monkeypatch.setattr(cue, '_draw', lambda: None)
+
+        cue.send()
+
+        assert cue.answer is None
+
+    def test_draw_with_y(self, monkeypatch):
+        cue = Confirm(self.name, self.message)
+
+        monkeypatch.setattr(cue, 'listen_for_key', lambda: cue.keys.get('y'))
+        monkeypatch.setattr(cursor, 'write', lambda _, color=True: None)
+
+        cue._draw()
+
+        assert cue.answer == {self.name: True}
+
+    def test_draw_with_n(self, monkeypatch):
+        cue = Confirm(self.name, self.message)
+
+        monkeypatch.setattr(cue, 'listen_for_key', lambda: cue.keys.get('n'))
+        monkeypatch.setattr(cursor, 'write', lambda _, color=True: None)
+
+        cue._draw()
+
+        assert cue.answer == {self.name: False}
+
     # For dev use only (do NOT use with CI):
 
     # def test__draw(self):
@@ -50,5 +81,6 @@ class TestConfirm:
     #     print(f'My answer: {answer}')
 
 
-def test_main():
-    assert confirm.main(1) == None
+def test_main(monkeypatch):
+    monkeypatch.setattr(Confirm, 'send', lambda _: None)
+    assert confirm.main() is None
