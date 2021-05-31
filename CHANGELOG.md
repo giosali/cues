@@ -1,3 +1,16 @@
+# v0.2.1
+
+## Fixes
+
+* Improved coverage for `Confirm` cue
+* Added `canvas.py` module
+  * Added test for `canvas.py` module
+* Rewrote `Form` cue
+  * Should behave much better now (no more flashing!)
+  * Can now use left and right arrow keys
+  * Can now use Backspace/Delete key
+* Begun gradual switch to NumPy-styled docstrings
+
 # v0.2.0
 
 ## Features
