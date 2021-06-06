@@ -30,5 +30,6 @@ if '-m' not in sys.argv:
     from .checkbox import Checkbox
     from .confirm import Confirm
     from .form import Form
+    from .password import Password
     from .select import Select
     from .survey import Survey

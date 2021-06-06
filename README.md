@@ -207,11 +207,36 @@ This produces the following output:
 
 <img src="https://raw.githubusercontent.com/GBS3/cues/main/media/checkbox.gif" width="800">
 
+<h3 align="center"><i><b>Password</b></i></h3>
+
+You can use the `Password` class when you need input from the user but would prefer their input be hidden while they type as it may contain sensitive information.
+
+If you would like to to see an example of this in action, you can run the following command in your terminal:
+
+```
+python -m cues.password
+```
+
+```python
+from cues import Password
+
+
+name = 'password'
+message = 'Password:'
+
+cue = Password(name, message)
+answer = cue.send()
+print(answer)
+```
+
+This produces the following output:
+
+<img src="https://raw.githubusercontent.com/GBS3/cues/main/media/password.gif" width="800">
+
 ## To Do
 
- - [x] Bring support to macOS
- - [x] Bring support to Linux
  - [ ] JSON prompt
  - [x] Checkbox prompt
+ - [x] Password prompt
 
  ...*amongst other things!*

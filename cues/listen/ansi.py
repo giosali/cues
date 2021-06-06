@@ -57,6 +57,7 @@ CURSOR_POS = '\x1b[6n'  # Gets current cursor position #ROW;#COLR
 # Erase functions:
 
 CLEAR_LINE = '\x1b[K'  # Clears the current line
+CLEAR_ENTIRE_LINE = '\x1b[2K'  # Clears the entire line
 
 
 # Set mode:
