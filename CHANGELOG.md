@@ -8,7 +8,7 @@
 
 ## Fixes
 
-* Fixed documentation mistakes for instatiating from `dict`s for several cues
+* Fixed documentation mistakes for instantiating from `dict`s for several cues
 
 # v0.2.2
 
