@@ -83,9 +83,9 @@ In the previous example, we initialized separte variables for the ``__init__`` m
 
 
     select_dict = {
-        name = 'programming_language'
-        message = 'Which one is your favorite programming language?'
-        options = [
+        'name': 'programming_language'
+        'message': 'Which one is your favorite programming language?'
+        'options': [
             'Python',
             'JavaScript',
             'C++',

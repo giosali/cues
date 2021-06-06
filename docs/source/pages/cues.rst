@@ -25,5 +25,6 @@ List of cues
     cues/checkbox
     cues/confirm
     cues/form
+    cues/password
     cues/select
     cues/survey

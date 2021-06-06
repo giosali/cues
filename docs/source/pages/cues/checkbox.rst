@@ -86,9 +86,9 @@ In the previous example, we initialized separte variables for the ``__init__`` m
 
 
     checkbox_dict = {
-        name = 'guitars'
-        message = 'Pick your favorite guitars:'
-        options = [
+        'name': 'guitars'
+        'message': 'Pick your favorite guitars:'
+        'options': [
             'Les Paul',
             'Stratocaster',
             'Telecaster',

@@ -76,7 +76,7 @@ When you "send" the cue to the user, they will be presented with something that 
 
    *The Form cue*
 
-The user will not be expected to answer these prompts by typing their responses. Once the user has finished, a ``dict`` containing another ``dict`` will be returned. The inner-``dict`` will consist of key-value pairs of your ``fields`` and the user's responses respectively. The result will resemble the following:
+The user will then be able to answer these prompts by typing their responses. Once the user has finished, a ``dict`` containing another ``dict`` will be returned. The inner-``dict`` will consist of key-value pairs of your ``fields`` and the user's responses respectively. The result will resemble the following:
 ::
 
     {
@@ -126,9 +126,9 @@ In the previous example, we initialized separte variables for the ``__init__`` m
 
 
     form_dict = {
-        name = 'basic_info'
-        message = 'Please fill out the following form:'
-        fields = [
+        'name': 'basic_info'
+        'message': 'Please fill out the following form:'
+        'fields': [
             {
                 'name': 'first_name',
                 'message': 'First name'

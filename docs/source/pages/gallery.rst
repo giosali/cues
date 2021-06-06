@@ -47,6 +47,17 @@ Form
 
    *The Form cue*
 
+Password
+--------
+
+.. figure:: ../_static/password.png
+   :width: 600px
+   :align: center
+   :alt: password snapshot
+   :figclass: align-center
+
+   *The Password cue*
+
 Select
 ------
 
