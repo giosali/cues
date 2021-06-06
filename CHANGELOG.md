@@ -1,3 +1,15 @@
+# v0.3.0
+
+## Features
+
+* Added a new cue: the `Password` cue
+* Added tests for the `Password` cue
+* Added documentation for the `Password` cue
+
+## Fixes
+
+* Fixed documentation mistakes for instatiating from `dict`s for several cues
+
 # v0.2.2
 
 ## Fixes
